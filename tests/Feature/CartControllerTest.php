@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature;
 
 use App\Models\CryptoCurrency;
@@ -14,8 +16,9 @@ use App\User;
 class CartControllerTest extends TestCase
 {
     private User $user;
+    private CartService $cartService;
 
-    public function setUp () :void
+    public function setUp(): void
     {
         parent::setUp();
         $this->user = User::factory()->create();
@@ -28,24 +31,14 @@ class CartControllerTest extends TestCase
         $this->cartService->forget($this->user->id);
     }
     
-    /**
-     * A test cart page.
-     *
-     * @return void
-     */
-    public function testGetCartPage()
+    public function testGetCartPage(): void
     {
         $response = $this->actingAs($this->user)->get('/cart');
 
         $response->assertSuccessful();
     }
 
-    /**
-     * A test cart page.
-     *
-     * @return void
-     */
-    public function testAddRelated()
+    public function testAddRelated(): void
     {
         $product = Product::factory()->create();
 
@@ -59,12 +52,7 @@ class CartControllerTest extends TestCase
         $response->assertSuccessful();
     }
 
-    /**
-     * A test cart page.
-     *
-     * @return void
-     */
-    public function testAddRelatedNoId()
+    public function testAddRelatedNoId(): void
     {
         $product = Product::factory()->create();
 
@@ -78,13 +66,8 @@ class CartControllerTest extends TestCase
         $response->assertStatus(422);
         $response->assertJsonStructure(['message', 'errors' => ['id']]);
     }
-
-    /**
-     * A test cart page.
-     *
-     * @return void
-     */
-    public function testAddRelatedInvalidId()
+    
+    public function testAddRelatedInvalidId(): void
     {
         $product = Product::factory()->create();
 
@@ -99,10 +82,7 @@ class CartControllerTest extends TestCase
         $response->assertJsonStructure(['message', 'errors' => ['id']]);
     }
 
-    /**
-     * @return void
-     */
-    public function testChangeShippingEmptyCart()
+    public function testChangeShippingEmptyCart(): void
     {
         /** @var ShippingMethod $shippingMethod */
         $shippingMethod = ShippingMethod::factory()->create(['enable' => true]);
@@ -118,10 +98,7 @@ class CartControllerTest extends TestCase
         $response->assertSuccessful();
     }
 
-    /**
-     * @return void
-     */
-    public function testChangeShipping()
+    public function testChangeShipping(): void
     {
         /** @var Product $product */
         $product = Product::factory()->create();
@@ -148,15 +125,15 @@ class CartControllerTest extends TestCase
     
     /**
      * @dataProvider shippingMethodValidatorDP
-     * @return void
      */
-    public function testChangeShippingValidation(
+    public function testChangeShippingValidation
+    (
         int|string|null $shippingMethodId,
         float|string|null $subtotal,
         string $invalidField,
         ?\Closure $shippingMethodCreator = null,
         ?bool $shippingMethodEnabled = true,
-    ) {
+    ): void {
         if ($shippingMethodCreator) {
             $shippingMethodCreator($shippingMethodEnabled);
         }
@@ -168,9 +145,6 @@ class CartControllerTest extends TestCase
         $response->assertJsonStructure(['message', 'errors' => [$invalidField]]);
     }
 
-    /**
-     * @return \Generator
-     */
     public function shippingMethodValidatorDP(): \Generator
     {
         $callback = function (bool $enabled = true) {
@@ -188,10 +162,7 @@ class CartControllerTest extends TestCase
         yield 'subtotal is less than 0' => [1, -100.45, 'subtotal', $callback];
     }
 
-    /**
-     * @return void
-     */
-    public function testRemoveItemEmptyCart()
+    public function testRemoveItemEmptyCart(): void
     {
         $product = Product::factory()->create();
         $response = $this->actingAs($this->user)->postJson(
@@ -207,9 +178,8 @@ class CartControllerTest extends TestCase
 
     /**
      * @dataProvider removeItemValidatorDP
-     * @return void
      */
-    public function testRemoveItemValidation($productId, $isRelated, $subtotal, string $errorField)
+    public function testRemoveItemValidation(?int $productId, ?int $isRelated, ?int $subtotal, string $errorField): void
     {
         Product::factory()->create();
 
@@ -233,10 +203,7 @@ class CartControllerTest extends TestCase
         ];
     }
     
-    /**
-     * @return void
-     */
-    public function testRemoveItemWithRecommendedAndCartHasOnlyOneProduct()
+    public function testRemoveItemWithRecommendedAndCartHasOnlyOneProduct(): void
     {
         /** @var Product $product */
         $product = Product::factory()->create();
@@ -268,10 +235,7 @@ class CartControllerTest extends TestCase
         $response->assertSuccessful();
     }
     
-    /**
-     * @return void
-     */
-    public function testRemoveItemWithoutRecommendedAndCartHasMoreThanOneProduct()
+    public function testRemoveItemWithoutRecommendedAndCartHasMoreThanOneProduct(): void
     {
         $this->withoutExceptionHandling();
         /** @var Product $product */

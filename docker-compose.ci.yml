@@ -1,0 +1,76 @@
+version: '3.8'
+services:
+  mariadb_test:
+    image: bitnami/mariadb:10
+    restart: unless-stopped
+    environment:
+      - MARIADB_USER=admin
+      - MARIADB_PASSWORD=secret
+      - MARIADB_ROOT_PASSWORD=rootsecret123
+      - MARIADB_DATABASE=shop
+      - MARIADB_SKIP_TEST_DB=yes
+    ports:
+      - '${DOCKER_MYSQL_TEST_PORT:-3308}:3306'
+
+  postgresql:
+    container_name: temporal-postgresql
+    image: postgres:9.6
+    environment:
+      POSTGRES_PASSWORD: temporal
+      POSTGRES_USER: temporal
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  temporal:
+    container_name: temporal
+    image: temporalio/auto-setup:latest
+    depends_on:
+      - postgresql
+    restart: on-failure
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "tctl",
+          "--address",
+          "temporal:7233",
+          "workflow",
+          "list"
+        ]
+      interval: 1s
+      timeout: 5s
+      retries: 30
+    environment:
+      - DB=postgresql
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_SEEDS=postgresql
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml
+    ports:
+      - "7233:7233"
+    volumes:
+      - ./.docker/temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
+
+  roadrunner:
+    image: gaintvlad/lara_shop_roadrunner:1.003
+    ports:
+      - "80:80"
+    env_file: .env
+    environment:
+      RR_VERSION: ${RR_VERSION}
+      APP_BASE_PATH: /app
+    working_dir: /app
+    depends_on:
+      - temporal
+      - postgresql
+    restart: on-failure
+    volumes:
+      - app_content:/app
+      #- ./.docker/roadrunner/config/rr.yaml:/etc/rr.yaml:ro
+
+volumes:
+  app_content:
+  pg_data:
