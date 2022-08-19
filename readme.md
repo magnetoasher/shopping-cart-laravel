@@ -1,13 +1,4 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
-
-## This is a Laravel + Vue.js e-commerce template that will make it easy for you to start your own online store.
-
-
-There is the [DEMO](http://uls.northeurope.cloudapp.azure.com/) ULE-shop.
-
-[Video presentation](https://youtu.be/McmVr2FEo-0)
-
-<p><img src="https://preview.ibb.co/dyyGMb/sshot_shop.png" alt="sshot_shop" border="0"></p>
+## Shopping Cart is a Laravel + Vue.js e-commerce template that will make it easy for you to start your own online store.
 
 1. Setup (install/create) Database and PHP server.
 2. Install [Composer](https://getcomposer.org/doc/00-intro.md)
@@ -33,5 +24,3 @@ brew install mkcert nss
 mkcert -cert-file .docker/nginx/dev/site.crt -key-file .docker/nginx/dev/site.key localhost 127.0.0.1
 ```
 - run docker-compose up -d
-
-_Uladzimir Sadkou_: hofirma@gmail.com 
