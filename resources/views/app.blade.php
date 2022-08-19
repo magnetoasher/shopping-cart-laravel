@@ -31,7 +31,7 @@
 
     <hr/>
     <footer class="footer">
-        <p class="text-center">Created by Uladzimir Sadkou hofirma@gmail.com</p>
+        <p class="text-center">Created by magnetoasher@gmail.com</p>
     </footer>
 </div>
 <!-- Scripts -->

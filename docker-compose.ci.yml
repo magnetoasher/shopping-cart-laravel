@@ -55,7 +55,7 @@ services:
       - ./.docker/temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
 
   roadrunner:
-    image: gaintvlad/lara_shop_roadrunner:1.003
+    image: gaintvlad/shopping_cart_roadrunner:1.003
     ports:
       - "80:80"
     env_file: .env

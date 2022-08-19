@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   roadrunner:
-    #image: gaintvlad/lara_shop_roadrunner:1.001
+    #image: gaintvlad/shopping_cart_roadrunner:1.001
     build:
       context: ./
       dockerfile: ./.docker/roadrunner/Dockerfile
